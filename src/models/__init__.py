@@ -1,1 +1,0 @@
-from .simpleFCNN import SimpleFCNN
