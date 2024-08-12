@@ -9,7 +9,7 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
-from src.models.simpleFCNN import SimpleFCNN
+from src.models.FCNN import SimpleFCNN
 from src.evaluation.evaluate_model import evaluate_model
 from src.utils.log import MetricLogger, ConfigLogger, BestModelLogger
 from src.utils.utils import create_subset, split_dataset
