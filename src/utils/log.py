@@ -39,14 +39,14 @@ class ConfigLogger(BaseLogger):
         super().__init__(cfg)
         
     def log_on_local(self):
-        save_path = self.cfg.save_dir.local.config
+        save_path = self.cfg.local.write_loc.config
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         with open(save_path, "w") as file:
             OmegaConf.save(config=self.cfg, f=file.name)
         print(f"Saved Config to {save_path}")
 
     def log_on_mlflow(self):
-        mlflow.log_artifact(self.cfg.save_dir.local.config, self.cfg.save_dir.mlflow.config)
+        mlflow.log_artifact(self.cfg.local.write_loc.config, self.cfg.mlflow.write_loc.config)
         print(f"Saved Config on mlflow")
 
 
@@ -56,13 +56,13 @@ class BestModelLogger(BaseLogger):
         self.model = model
 
     def log_on_local(self):
-        save_path = self.cfg.save_dir.local.best_model
+        save_path = self.cfg.local.write_loc.best_model
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         torch.save(self.model.state_dict(), save_path)
         print(f"Saved Best Model to {save_path}")
 
     def log_on_mlflow(self):
-        mlflow.log_artifact(self.cfg.save_dir.local.best_model, self.cfg.save_dir.mlflow.best_model)
+        mlflow.log_artifact(self.cfg.local.write_loc.best_model, self.cfg.mlflow.write_loc.best_model)
         print(f"Saved Best Model on mlflow")
 
 
@@ -91,9 +91,7 @@ class UserParamLogger(BaseLogger):
         pass
     
     def log_on_mlflow(self):
-        mlflow.log_params(self.cfg.dataset)
-        mlflow.log_params(self.cfg.train_param)
-        mlflow.log_params(self.cfg.test_param)
+        mlflow.log_params(self.cfg.hparam)
         print(f"Saved User parameter on mlflow")
 
 

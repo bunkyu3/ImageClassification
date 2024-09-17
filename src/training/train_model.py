@@ -49,10 +49,10 @@ def train_model(cfg, manager):
     transform = transforms.Compose([
         transforms.ToTensor(),
     ])
-    train_dataset = datasets.MNIST(root="./data/raw", train=True, download=True, transform=transform)
-    val_dataset = datasets.MNIST(root="./data/raw", train=False, download=True, transform=transform)
-    train_loader = DataLoader(dataset=train_dataset, batch_size=cfg.train_param.batch_size, shuffle=True)
-    val_loader = DataLoader(dataset=val_dataset, batch_size=cfg.train_param.batch_size, shuffle=False)
+    train_dataset = datasets.MNIST(root=cfg.local.read_loc.rawdata_dir, train=True, download=True, transform=transform)
+    val_dataset = datasets.MNIST(root=cfg.local.read_loc.rawdata_dir, train=False, download=True, transform=transform)
+    train_loader = DataLoader(dataset=train_dataset, batch_size=cfg.hparam.train_batch_size, shuffle=True)
+    val_loader = DataLoader(dataset=val_dataset, batch_size=cfg.hparam.val_batch_size, shuffle=False)
     print("len(train_dataset): ", len(train_dataset))
     print("len(val_dataset): ", len(val_dataset))
     # ネットワークと学習設定
@@ -60,9 +60,9 @@ def train_model(cfg, manager):
     model = CNN()
     model.to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=cfg.train_param.learning_rate)
+    optimizer = optim.Adam(model.parameters(), lr=cfg.hparam.learning_rate)
     # 学習
-    for epoch in range(cfg.train_param.num_epochs):
+    for epoch in range(cfg.hparam.num_epochs):
         print(epoch)
         train_one_epoch(cfg, manager, epoch, model, train_loader, criterion, optimizer, device)
         validate(cfg, manager, epoch, model, val_loader, criterion, device)
