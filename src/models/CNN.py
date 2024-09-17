@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+# ゼロから作るDeepLearningより
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
