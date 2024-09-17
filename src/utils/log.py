@@ -34,38 +34,6 @@ class MetricLogger(BaseLogger):
             mlflow.log_metric("accuracy", self.accuracy, step=self.epoch)
 
 
-class ConfigLogger(BaseLogger):
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        
-    def log_on_local(self):
-        save_path = self.cfg.local.write_loc.config
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        with open(save_path, "w") as file:
-            OmegaConf.save(config=self.cfg, f=file.name)
-        print(f"Saved Config to {save_path}")
-
-    def log_on_mlflow(self):
-        mlflow.log_artifact(self.cfg.local.write_loc.config, self.cfg.mlflow.write_loc.config)
-        print(f"Saved Config on mlflow")
-
-
-class BestModelLogger(BaseLogger):
-    def __init__(self, cfg, model):
-        super().__init__(cfg)
-        self.model = model
-
-    def log_on_local(self):
-        save_path = self.cfg.local.write_loc.best_model
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        torch.save(self.model.state_dict(), save_path)
-        print(f"Saved Best Model to {save_path}")
-
-    def log_on_mlflow(self):
-        mlflow.log_artifact(self.cfg.local.write_loc.best_model, self.cfg.mlflow.write_loc.best_model)
-        print(f"Saved Best Model on mlflow")
-
-
 class DeviceLogger(BaseLogger):
     def __init__(self, cfg):
         super().__init__(cfg)
@@ -93,6 +61,57 @@ class UserParamLogger(BaseLogger):
     def log_on_mlflow(self):
         mlflow.log_params(self.cfg.hparam)
         print(f"Saved User parameter on mlflow")
+
+
+class ConfigLogger(BaseLogger):
+    def __init__(self, cfg):
+        super().__init__(cfg)
+        self.local_path = self.cfg.local.write_loc.config
+        self.mlflow_path = self.cfg.mlflow.write_loc.config_dir
+        
+    def log_on_local(self):
+        os.makedirs(os.path.dirname(self.local_path), exist_ok=True)
+        with open(self.local_path, "w") as file:
+            OmegaConf.save(config=self.cfg, f=file.name)
+        print(f"Saved Config to {self.local_path}")
+
+    def log_on_mlflow(self):
+        mlflow.log_artifact(self.local_path, self.mlflow_path)
+        print(f"Saved Config on mlflow")
+
+
+class ModelLogger(BaseLogger):
+    def __init__(self, cfg, epoch, model):
+        super().__init__(cfg)
+        self.model = model
+        self.local_path = self.cfg.local.write_loc.model_dir + f"/epoch{epoch}.pth"
+        self.mlflow_path = self.cfg.mlflow.write_loc.model_dir
+
+    def log_on_local(self):
+        os.makedirs(os.path.dirname(self.local_path), exist_ok=True)
+        torch.save(self.model.state_dict(), self.local_path)
+        print(f"Saved Model to {self.local_path}")
+
+    def log_on_mlflow(self):
+        mlflow.log_artifact(self.local_path, self.mlflow_path)
+        print(f"Saved Model on mlflow")
+
+
+class BestModelLogger(BaseLogger):
+    def __init__(self, cfg, model):
+        super().__init__(cfg)
+        self.model = model
+        self.local_path = self.cfg.local.write_loc.best_model
+        self.mlflow_path = self.cfg.mlflow.write_loc.best_model_dir
+
+    def log_on_local(self):
+        os.makedirs(os.path.dirname(self.local_path), exist_ok=True)
+        torch.save(self.model.state_dict(), self.local_path)
+        print(f"Saved Best Model to {self.local_path}")
+
+    def log_on_mlflow(self):
+        mlflow.log_artifact(self.local_path, self.mlflow_path)
+        print(f"Saved Best Model on mlflow")
 
 
 class LoggerManager:

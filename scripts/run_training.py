@@ -17,6 +17,6 @@ if __name__ == '__main__':
     # config読み込み
     cfg = OmegaConf.load("./config/config.yaml")
     # Log制御インスタンス
-    manager = LoggerManager(enable_mlflow=False)
+    manager = LoggerManager(enable_mlflow=True)
     # 学習
     train_model(cfg, manager)

@@ -9,15 +9,17 @@ mlflow:
   experiment_name: "Default"
   tracking_dir: "results/mlruns" # run_experiments.pyからの相対パスを書く
   write_loc: # tracking_dirからの相対パスを書く（ファイル名は不要）
-    config: ""  
-    best_model: ""
+    model_dir: ""
+    config_dir: ""
+    best_model_dir: ""
 
 local:
   read_loc:
     rawdata_dir: "./data/raw"
   write_loc:
+    model_dir: "results/output/models/"
     config: "results/output/config.yaml"
-    best_model: "results/output/best_model.pth"
+    best_model: "results/output/models/best_model.pth"
 
 hparam:
   num_epochs: 2

@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 from src.models.FCNN import SimpleFCNN
 from src.models.CNN import CNN
-from src.utils.log import MetricLogger, ConfigLogger, BestModelLogger
+from src.utils.log import MetricLogger, ConfigLogger, ModelLogger, BestModelLogger
 
 
 def train_one_epoch(cfg, manager, epoch, model, dataloader, criterion, optimizer, device):
@@ -66,6 +66,7 @@ def train_model(cfg, manager):
         print(epoch)
         train_one_epoch(cfg, manager, epoch, model, train_loader, criterion, optimizer, device)
         validate(cfg, manager, epoch, model, val_loader, criterion, device)
+        manager.run(ModelLogger(cfg, epoch, model))
     # ログ
     manager.run(ConfigLogger(cfg))
     manager.run(BestModelLogger(cfg, model))
